@@ -70,6 +70,21 @@ app.post('/register', (req, res) => {
   res.status(201).json(database.users[database.users.length - 1]);
 });
 
+app.put('/image', (req, res) => {
+  const { id } = req.body;
+  let isFound = false;
+  database.users.forEach((user) => {
+    if (user.id === id) {
+      isFound = true;
+      user.entries++;
+      return res.json(user.entries);
+    }
+  });
+  if (!isFound) {
+    res.status(404).json('No such user.');
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Listening on PORT ${PORT}...`);
 });
