@@ -18,7 +18,7 @@ const database = {
       joined: new Date(),
     },
     {
-      id: '1234',
+      id: '124',
       name: 'John',
       email: 'john@gmail.com',
       password: 'cookies',
@@ -29,7 +29,7 @@ const database = {
 };
 
 app.get('/', (req, res) => {
-  res.send('Working');
+  res.send(database.users);
 });
 
 app.post('/signin', (req, res) => {
@@ -41,6 +41,19 @@ app.post('/signin', (req, res) => {
   } else {
     res.status(400).json('Error Logging In');
   }
+});
+
+app.post('/register', (req, res) => {
+  const { name, email, password } = req.body;
+  database.users.push({
+    id: '125',
+    name,
+    email,
+    password,
+    entries: 0,
+    joined: new Date(),
+  });
+  res.status(201).json(database.users[database.users.length - 1]);
 });
 
 app.listen(PORT, () => {
