@@ -32,6 +32,20 @@ app.get('/', (req, res) => {
   res.send(database.users);
 });
 
+app.get('/profile/:id', (req, res) => {
+  const { id } = req.params;
+  let isFound = false;
+  database.users.forEach((user) => {
+    if (user.id === id) {
+      isFound = true;
+      return res.json(user);
+    }
+  });
+  if (!isFound) {
+    res.status(404).json('No such user.');
+  }
+});
+
 app.post('/signin', (req, res) => {
   if (
     req.body.email === database.users[0].email &&
