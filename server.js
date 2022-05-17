@@ -83,17 +83,30 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
   const { name, email, password } = req.body;
-  db('users')
-    .returning('*')
-    .insert({
-      email: email,
-      name: name,
-      joined: new Date(),
-    })
-    .then((user) => {
-      res.status(201).json(user[0]);
-    })
-    .catch((err) => res.status(400).json('Unable to Register.'));
+  const hash = bcrypt.hashSync(password, saltRounds);
+  db.transaction((trx) => {
+    trx
+      .insert({
+        hash: hash,
+        email: email,
+      })
+      .into('login')
+      .returning('email')
+      .then((loginEmail) => {
+        return trx('users')
+          .returning('*')
+          .insert({
+            email: loginEmail[0].email,
+            name: name,
+            joined: new Date(),
+          })
+          .then((user) => {
+            res.status(201).json(user[0]);
+          });
+      })
+      .then(trx.commit)
+      .catch(trx.rollback);
+  }).catch((err) => res.status(400).json('Unable to Register.'));
 });
 
 app.put('/image', (req, res) => {
@@ -108,7 +121,6 @@ app.put('/image', (req, res) => {
     .catch((err) => res.status(400).json('Unable to get entries'));
 });
 
-// const hash = bcrypt.hashSync(password, saltRounds);
 // console.log(hash);
 
 // Load hash from your password DB.
