@@ -4,6 +4,19 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const someOtherPlaintextPassword = 'not_bacon';
+const knex = require('knex');
+
+const postgres = knex({
+  client: 'pg',
+  connection: {
+    host: '127.0.0.1',
+    user: 'postgres',
+    password: '123',
+    database: 'smart-brain',
+  },
+});
+
+console.log(postgres.select('*').from('users'));
 
 const app = express();
 
