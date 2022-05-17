@@ -6,7 +6,7 @@ const saltRounds = 10;
 const someOtherPlaintextPassword = 'not_bacon';
 const knex = require('knex');
 
-const postgres = knex({
+const db = knex({
   client: 'pg',
   connection: {
     host: '127.0.0.1',
@@ -15,8 +15,6 @@ const postgres = knex({
     database: 'smart-brain',
   },
 });
-
-console.log(postgres.select('*').from('users'));
 
 const app = express();
 
@@ -84,13 +82,13 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
   const { name, email, password } = req.body;
-  database.users.push({
-    id: '125',
-    name,
-    email,
-    entries: 0,
-    joined: new Date(),
-  });
+  db('users')
+    .insert({
+      email: email,
+      name: name,
+      joined: new Date(),
+    })
+    .then(console.log);
   res.status(201).json(database.users[database.users.length - 1]);
 });
 
