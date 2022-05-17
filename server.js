@@ -1,5 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const someOtherPlaintextPassword = 'not_bacon';
 
 const app = express();
 
@@ -24,6 +27,13 @@ const database = {
       password: 'cookies',
       entries: 0,
       joined: new Date(),
+    },
+  ],
+  login: [
+    {
+      id: '987',
+      hash: '',
+      email: 'ashley@gmail.com',
     },
   ],
 };
@@ -84,6 +94,13 @@ app.put('/image', (req, res) => {
     res.status(404).json('No such user.');
   }
 });
+
+// const hash = bcrypt.hashSync(password, saltRounds);
+// console.log(hash);
+
+// Load hash from your password DB.
+// bcrypt.compareSync(myPlaintextPassword, hash); // true
+// bcrypt.compareSync(someOtherPlaintextPassword, hash); // false
 
 app.listen(PORT, () => {
   console.log(`Listening on PORT ${PORT}...`);
