@@ -4,6 +4,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const knex = require('knex');
+
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
@@ -26,42 +27,12 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3000;
 
-const database = {
-  users: [
-    {
-      id: '123',
-      name: 'Ashley',
-      email: 'ashley@gmail.com',
-      password: 'bananas',
-      entries: 0,
-      joined: new Date(),
-    },
-    {
-      id: '124',
-      name: 'John',
-      email: 'john@gmail.com',
-      password: 'cookies',
-      entries: 0,
-      joined: new Date(),
-    },
-  ],
-  login: [
-    {
-      id: '987',
-      hash: '',
-      email: 'ashley@gmail.com',
-    },
-  ],
-};
-
 app.get('/', (req, res) => {
-  res.send(database.users);
+  res.send(db.users);
 });
 app.get('/profile/:id', profile.handleProfileGet(db));
-
 app.post('/signin', signin.handleSignin(db, bcrypt));
 app.post('/register', register.handleRegister(db, bcrypt, saltRounds));
-
 app.put('/image', image.handleImage(db));
 
 app.listen(PORT, () => {
