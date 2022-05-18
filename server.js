@@ -3,10 +3,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-const someOtherPlaintextPassword = 'not_bacon';
 const knex = require('knex');
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
+const profile = require('./controllers/profile');
 
 const db = knex({
   client: 'pg',
@@ -57,20 +57,7 @@ app.get('/', (req, res) => {
   res.send(database.users);
 });
 
-app.get('/profile/:id', (req, res) => {
-  const { id } = req.params;
-  db.select('*')
-    .from('users')
-    .where({ id })
-    .then((user) => {
-      if (user.length) {
-        res.json(user[0]);
-      } else {
-        res.status(400).json('Not Found');
-      }
-    })
-    .catch((err) => res.status(400).json('Error getting user'));
-});
+app.get('/profile/:id', (req, res) => profile.handleProfileGet(req, res, db));
 
 app.post('/signin', (req, res) => signin.handleSignin(req, res, db, bcrypt));
 
@@ -89,11 +76,6 @@ app.put('/image', (req, res) => {
     })
     .catch((err) => res.status(400).json('Unable to get entries'));
 });
-
-// console.log(hash);
-
-// Load hash from your password DB.
-// bcrypt.compareSync(someOtherPlaintextPassword, hash); // false
 
 app.listen(PORT, () => {
   console.log(`Listening on PORT ${PORT}...`);
