@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 const PORT = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
-  res.send(db.users);
+  res.send('working');
 });
 app.get('/profile/:id', profile.handleProfileGet(db));
 app.post('/signin', signin.handleSignin(db, bcrypt));
